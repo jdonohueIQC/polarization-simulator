@@ -74,6 +74,7 @@
     box-shadow: 0 1px 0 rgba(0,0,0,0.02);
   }
   .toolbar{ display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px; margin-bottom:18px; }
+  .toolbar-rows{ display:flex; flex-direction:column; gap:10px; width:100%; }
   .toolbar-group{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
 
   .diagram-wrap{ position:relative; width:100%; overflow-x:auto; overflow-y:visible; }
@@ -88,6 +89,9 @@
   .ref-cross{ stroke: #c9c2b0; stroke-width: 1; stroke-dasharray: 3 4; }
   .el-title{ font: 700 10.5px var(--sans); fill: var(--ink-soft); text-anchor:middle; text-transform:uppercase; letter-spacing:.03em; }
   .el-angle-label{ font: 700 13px var(--sans); fill: var(--ink); text-anchor:middle; }
+  .el-gate-label{ font: 700 10px var(--sans); fill: var(--ink-soft); text-anchor:middle; }
+  .absorbed-mark{ font: 700 26px var(--sans); fill: var(--bad); text-anchor:middle; }
+  .next-object-slot{ fill:#fff; stroke:var(--ink-soft); stroke-width:1.5; stroke-dasharray:4 3; }
   .pct-label{ font: 700 14px var(--sans); fill: var(--wave-top); text-anchor:middle; }
   .arrowhead-blue{ fill: var(--wave-top); }
   .arrowhead-white{ fill: #ffffff; }
@@ -95,6 +99,7 @@
 
   .element-square{ fill: var(--element-fill); stroke: var(--element-stroke); stroke-width: 1.5; }
   .waveplate-square{ fill: #cfe9f7; stroke: #7fb3d0; stroke-width: 1.5; }
+  .glass-square{ fill: #fff; stroke: #7fb3d0; stroke-width: 1.5; }
   .qwp-square{ fill: #f7d6d1; stroke: #cf8a80; stroke-width: 1.5; }
   .waveplate-slow-axis{ stroke: var(--ink); stroke-width: 1.5; }
   .waveplate-fast-axis{ stroke: var(--ink); stroke-width: 1.5; stroke-dasharray: 4 3; }
@@ -179,9 +184,81 @@
   footer.note{ margin-top: 28px; font-size:12.5px; color: var(--ink-soft); text-align:center; }
   footer.note a{ color: var(--crimson); text-decoration: underline; }
   footer.note a:hover{ color: var(--crimson-dark); }
+
+  /* ---- Quiz mode ---- */
+  .quiz-layout{ display:grid; grid-template-columns: 340px 1fr; gap:22px; align-items:start; }
+  @media (max-width: 760px){ .quiz-layout{ grid-template-columns: 1fr; } }
+  #quiz-diagram-wrap, #game-diagram-wrap{ background:#f6f4ee; border:1px solid var(--line); border-radius:8px; }
+  #quiz-svg, #game-svg{ display:block; }
+  .checkbox-row{ display:flex; flex-direction:column; gap:8px; margin-top:12px; }
+  .quiz-check{ font-size:13px; color:var(--ink-soft); display:flex; align-items:flex-start; gap:7px; cursor:pointer; }
+  .quiz-check input{ margin-top:3px; flex-shrink:0; }
+  .quiz-history-row{ display:flex; align-items:center; gap:14px; margin-bottom:4px; flex-wrap:wrap; }
+  .quiz-history-icons-row{ margin-bottom:10px; }
+  .quiz-stats-inline{ font:700 12.5px var(--sans); color:var(--ink); white-space:nowrap; }
+  .quiz-stats-inline .n{ color:var(--crimson); }
+  #quiz-history-svg, #game-history-svg{ display:block; height:14px; }
+  .quiz-question{ margin-top:14px; }
+  .quiz-question-label{ font:700 14px var(--sans); margin-bottom:8px; }
+  .quiz-btn-row{ display:flex; gap:8px; flex-wrap:wrap; }
+  .quiz-btn{
+    font:700 13px var(--sans); padding:10px 16px; border-radius:8px; border:1.5px solid var(--ink);
+    background:#fff; color:var(--ink); cursor:pointer; transition: transform .08s ease;
+  }
+  .quiz-btn:hover{ background: var(--crimson-tint); transform: translateY(-1px); }
+  .quiz-btn.correct{ background: var(--good); border-color: var(--good); color:#fff; }
+  .quiz-btn.wrong{ background: var(--bad); border-color: var(--bad); color:#fff; }
+  .quiz-btn:disabled{ cursor:default; transform:none; }
+  .quiz-lost{ margin-top:14px; padding:14px; border:1.5px dashed var(--bad); border-radius:8px; background:#fbeceb; }
+  .quiz-lost-title{ font-family: var(--display); font-weight:700; font-size:22px; color: var(--bad); margin-bottom:4px; }
+  .quiz-lost-sub{ font:600 12.5px var(--sans); color: var(--ink-soft); margin-bottom:10px; }
+  .game-message{ padding:12px 14px; border-radius:8px; margin-bottom:14px; border:1.5px dashed transparent; }
+  .game-message-title{ font-family: var(--display); font-weight:700; font-size:20px; margin-bottom:3px; }
+  .game-message-sub{ font:600 12px var(--sans); color: var(--ink-soft); }
+  .game-message-neutral-text{ font:600 13px var(--sans); color: var(--ink-soft); }
+  .game-message.neutral{ border-color: var(--line); background:#f6f4ee; border-style:solid; }
+  .game-message.lost{ border-color: var(--bad); background:#fbeceb; }
+  .game-message.lost .game-message-title{ color: var(--bad); }
+  .game-message.success{ border-color: var(--good); background:#eaf6ee; }
+  .game-message.success .game-message-title{ color: var(--good); }
+  .game-message.rotated{ border-color: var(--wave-top); background:#eaf1fa; }
+  .game-message.rotated .game-message-title{ color: var(--wave-top); }
+  .game-card{ cursor:pointer; }
+  .game-card:hover{ opacity:.8; }
+  .game-hand-section{ margin-top:16px; }
+  .game-hand-label{ font:700 12px var(--sans); color:var(--ink-soft); text-transform:uppercase; letter-spacing:.03em; margin-bottom:9px; }
+  .game-hand-row{ display:flex; gap:14px; flex-wrap:wrap; }
+  .game-card-box{
+    width:104px; cursor:pointer; border:1.5px solid var(--ink); border-radius:9px; background:#fff;
+    padding:9px 6px 11px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
+    gap:8px; transition: transform .08s ease, box-shadow .08s ease; box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .game-card-box:hover{ transform: translateY(-3px); border-color: var(--crimson); box-shadow: 0 4px 10px rgba(0,0,0,0.14); }
+  .game-card-box.lost-card{ border-color: var(--bad); background:#fbeceb; justify-content:center; min-height:104px; }
+  .game-card-box.lost-card:hover{ border-color: var(--bad); background:#f6dcda; }
+  .game-card-box.lost-card .game-card-label{ color: var(--bad); }
+  .game-card-icon{ width:66px; height:66px; display:block; }
+  .game-card-label{ font:700 11px var(--sans); text-align:center; color:var(--ink); line-height:1.3; }
 </style>
 </head>
 <body>
+<!-- Global, always-rendered marker defs. Kept outside any panel that gets
+     display:none (Build/Quiz/Game toggling) -- markers referenced from a
+     hidden ancestor don't render in most browsers, so every icon-drawing
+     function references these shared IDs instead of redefining its own. -->
+<svg width="0" height="0" style="position:absolute;">
+  <defs>
+    <marker id="arrow-blue" markerWidth="5.5" markerHeight="5.5" refX="2.7" refY="2.7" orient="auto-start-reverse">
+      <path d="M0,0 L5.5,2.7 L0,5.5 Z" class="arrowhead-blue"/>
+    </marker>
+    <marker id="arrow-white" markerWidth="5" markerHeight="5" refX="2.5" refY="2.5" orient="auto-start-reverse">
+      <path d="M0,0 L5,2.5 L0,5 Z" class="arrowhead-white"/>
+    </marker>
+    <marker id="arrow-black" markerWidth="4.5" markerHeight="4.5" refX="2.2" refY="2.2" orient="auto-start-reverse">
+      <path d="M0,0 L4.5,2.2 L0,4.5 Z" class="arrowhead-black"/>
+    </marker>
+  </defs>
+</svg>
 <div class="app">
 
   <header class="top">
@@ -193,21 +270,40 @@
   </header>
 
   <div class="panel toolbar">
-    <div class="toolbar-group">
-      <div class="mode-switch" id="mode-switch">
-        <button data-mode="laser" class="active">Laser</button>
-        <button data-mode="photon">Photon</button>
+    <div class="toolbar-rows">
+      <div class="toolbar-group">
+        <div class="mode-switch" id="app-mode-switch">
+          <button data-appmode="build" class="active">Build</button>
+          <button data-appmode="quiz">Quiz</button>
+          <button data-appmode="game">Game</button>
+        </div>
       </div>
-      <div class="mode-switch" id="ui-mode-switch">
-        <button data-uimode="basic" class="active" title="Only H/V/&plusmn;45&deg; presets and Z/X/Hadamard wave plates">Basic</button>
-        <button data-uimode="advanced" title="All angles, quarter-wave plates, and circular polarization">Advanced</button>
+      <div class="toolbar-group">
+        <div class="mode-switch" id="mode-switch">
+          <button data-mode="photon" class="active">Photon</button>
+          <button data-mode="laser">Laser</button>
+        </div>
+        <div class="mode-switch" id="ui-mode-switch">
+          <button data-uimode="basic" class="active" title="Only H/V/&plusmn;45&deg; presets and Z/X/Hadamard wave plates">Basic</button>
+          <button data-uimode="advanced" title="All angles, quarter-wave plates, and circular polarization">Advanced</button>
+        </div>
+        <div class="mode-switch" id="waveplate-option-switch" style="display:none;">
+          <button data-wpoption="off" class="active">Polarizers Only</button>
+          <button data-wpoption="on">Polarizers and Rotators</button>
+        </div>
+        <div class="mode-switch" id="circular-option-switch" style="display:none;">
+          <button data-circoption="off" class="active">Linear Only</button>
+          <button data-circoption="on">Linear and Circular</button>
+        </div>
+        <div class="mode-switch" id="sound-toggle-switch" style="display:none;">
+          <button data-soundoption="off" class="active">Sound Off</button>
+          <button data-soundoption="on">Sound On</button>
+        </div>
       </div>
-    </div>
-    <div class="btn-row" style="margin-top:0;">
-      <button class="btn" id="reset-btn">Reset</button>
     </div>
   </div>
 
+  <div id="build-mode-content">
   <div class="panel">
     <div class="diagram-wrap" id="diagram-wrap">
       <div class="diagram-inner" id="diagram-inner">
@@ -216,17 +312,18 @@
       </div>
     </div>
 
-    <div class="beam-controls" id="laser-controls">
+    <div class="beam-controls" id="laser-controls" style="display:none;">
       <div class="status" id="laser-status">Adjust the angles to see how much light gets through.</div>
     </div>
 
-    <div class="beam-controls" id="photon-controls" style="display:none;">
+    <div class="beam-controls" id="photon-controls">
       <div>
         <div class="btn-row" style="margin-top:0;">
           <button class="btn primary" id="send-1-btn">Send 1 Photon</button>
           <button class="btn" id="send-5-btn">Send 5 Photons</button>
           <button class="btn" id="send-1000-btn">Send 1000 Photons</button>
           <button class="btn" id="clear-counts-btn">Clear Counts</button>
+          <button class="btn" id="reset-btn">Reset</button>
         </div>
         <div class="photon-counts" style="margin-top:8px;">Sent: <span class="n" id="count-sent">0</span> &nbsp;|&nbsp; Transmitted: <span class="n" id="count-transmitted">0</span> &nbsp;|&nbsp; Absorbed: <span class="n" id="count-absorbed">0</span></div>
         <div class="status" id="photon-status">Click &ldquo;Send 1 Photon&rdquo; to fire a single photon through the polarizers.</div>
@@ -248,6 +345,65 @@
       <div class="math-trace-steps" id="math-trace-steps"></div>
     </div>
   </details>
+  </div>
+
+  <div class="panel" id="quiz-panel" style="display:none;">
+    <div class="quiz-layout">
+      <div class="quiz-diagram-col">
+        <div class="quiz-history-row">
+          <span class="quiz-stats-inline">Best Streak: <span class="n" id="quiz-best">0</span></span>
+          <span class="quiz-stats-inline">Current Streak: <span class="n" id="quiz-streak">0</span></span>
+        </div>
+        <div class="quiz-history-icons-row"><svg id="quiz-history-svg" xmlns="http://www.w3.org/2000/svg"></svg></div>
+        <div class="diagram-wrap" id="quiz-diagram-wrap">
+          <svg id="quiz-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+        </div>
+      </div>
+      <div class="quiz-question-col">
+        <div class="status" id="quiz-status">A photon leaves the source, horizontally polarized.</div>
+
+        <div id="quiz-q1" class="quiz-question">
+          <div class="quiz-question-label">What happens to the photon at this polarizer?</div>
+          <div class="quiz-btn-row" id="quiz-q1-buttons">
+            <button class="quiz-btn" data-choice="transmit">Transmits</button>
+            <button class="quiz-btn" data-choice="absorbed">Absorbed</button>
+            <button class="quiz-btn" data-choice="random">Random (50/50)</button>
+          </div>
+        </div>
+
+        <div id="quiz-q2" class="quiz-question" style="display:none;">
+          <div class="quiz-question-label">What is the resulting polarization?</div>
+          <div class="quiz-btn-row" id="quiz-q2-buttons"></div>
+        </div>
+
+        <div id="quiz-lost-panel" class="quiz-lost" style="display:none;">
+          <div class="quiz-lost-title">Photon Lost!</div>
+          <div class="quiz-lost-sub" id="quiz-lost-sub"></div>
+          <button class="btn primary" id="quiz-new-round-btn">New Round</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="game-panel" style="display:none;">
+    <div class="game-single-col">
+      <div class="quiz-history-row">
+        <span class="quiz-stats-inline">Best Streak: <span class="n" id="game-best">0</span></span>
+        <span class="quiz-stats-inline">Current Streak: <span class="n" id="game-streak">0</span></span>
+      </div>
+      <div class="quiz-history-icons-row"><svg id="game-history-svg" xmlns="http://www.w3.org/2000/svg"></svg></div>
+      <div id="game-message-box" class="game-message neutral">
+        <div class="game-message-neutral-text">Play an object from your hand and try to help the photon survive.</div>
+      </div>
+      <div class="diagram-wrap" id="game-diagram-wrap">
+        <svg id="game-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+      </div>
+      <div class="game-hand-section">
+        <div class="game-hand-label">Hand: Select the next object to play</div>
+        <div class="game-hand-row" id="game-hand-row"></div>
+      </div>
+    </div>
+  </div>
 
   <footer class="note">Built to accompany <a href="https://uwaterloo.ca/institute-for-quantum-computing/outreach/quantum-educators/teacher-resources" target="_blank" rel="noopener noreferrer"><em>The Two Golden Rules of Quantum Mechanics with Light Polarization</em></a> &mdash; IQC Scientific Outreach, University of Waterloo.</footer>
 </div>
@@ -257,7 +413,7 @@
   "use strict";
 
   // ================= State =================
-  let mode = "laser";
+  let mode = "photon";
   let uiMode = "basic"; // "basic" (simplified presets, no sliders) or "advanced"
   let speed = "medium";
   const SPEED_FACTOR = { slow: 1.7, medium: 1, fast: 0.5 };
@@ -507,7 +663,10 @@
   const FIRST_X = 120;
   const ARROW_OFFSET = 72;
   const SVG_HEIGHT = 210;
-  const CONTROLS_HEIGHT = 330;
+  // Basic mode's cards have no angle slider/number entry, so they're much
+  // shorter than Advanced mode's -- give the row less fixed height to avoid
+  // a block of empty white space below the shorter cards.
+  function controlsHeight(){ return uiMode === "basic" ? 175 : 330; }
 
   function computeLayout(){
     const elX = elements.map((e,i)=> FIRST_X + i * GAP);
@@ -517,19 +676,12 @@
   }
 
   // ================= SVG building blocks =================
+  // Marker defs now live once in the persistent global <svg> right after
+  // <body> (see top of file) so they keep working even when this panel is
+  // hidden via display:none; this stays as a no-op so existing call sites
+  // don't need to change.
   function svgDefs(){
-    return `
-    <defs>
-      <marker id="arrow-blue" markerWidth="5.5" markerHeight="5.5" refX="2.7" refY="2.7" orient="auto-start-reverse">
-        <path d="M0,0 L5.5,2.7 L0,5.5 Z" class="arrowhead-blue"/>
-      </marker>
-      <marker id="arrow-white" markerWidth="5" markerHeight="5" refX="2.5" refY="2.5" orient="auto-start-reverse">
-        <path d="M0,0 L5,2.5 L0,5 Z" class="arrowhead-white"/>
-      </marker>
-      <marker id="arrow-black" markerWidth="4.5" markerHeight="4.5" refX="2.2" refY="2.2" orient="auto-start-reverse">
-        <path d="M0,0 L4.5,2.2 L0,4.5 Z" class="arrowhead-black"/>
-      </marker>
-    </defs>`;
+    return "";
   }
 
   function refCross(x, y, r){
@@ -709,7 +861,7 @@
     const inner = document.getElementById("diagram-inner");
     inner.style.width = totalWidth + "px";
     controlsRow.style.width = totalWidth + "px";
-    controlsRow.style.height = CONTROLS_HEIGHT + "px";
+    controlsRow.style.height = controlsHeight() + "px";
 
     const marker = document.getElementById("photon-marker");
     marker.setAttribute("transform", `translate(${elX[0]},${BEAM_Y})`);
@@ -1242,6 +1394,719 @@
   document.getElementById("send-5-btn").addEventListener("click", ()=> sendPhotons(5));
   document.getElementById("send-1000-btn").addEventListener("click", ()=> simulateBatch(1000));
   document.getElementById("clear-counts-btn").addEventListener("click", resetCounts);
+
+  // ================= Quiz mode =================
+  // Reuses the same physics (applyElement / jonesFromAngle / jonesCircular /
+  // jonesToEllipse) as Build mode, restricted to a state space that's closed
+  // under H/V/+-45 polarizers, Z/X/Hadamard half-wave plates, circular
+  // polarizers, and QWPs at 0/45 -- so the resulting state is always exactly
+  // one of H, V, +45, -45, R, L, never an intermediate ellipse.
+  let appMode = "build";
+  let quizAllowWaveplates = false;
+  let quizAllowCircular = false;
+  let quizStateVector = jonesFromAngle(0);
+  let quizStateLabel = "H";
+  let quizElement = null;
+  let quizElementHistory = [];              // elements already survived, in order
+  let quizStateHistory = [jonesFromAngle(0)]; // state after each element; [0] = initial H
+  let quizStreak = 0;
+  let quizBest = 0;
+  let quizBusy = false;
+  let quizAvoidElement = null; // set when lost on the round's very first element
+
+  const QUIZ_LINEAR_LABELS = [["H", 0], ["V", 90], ["+45", 45], ["-45", -45]];
+
+  function quizVectorLabel(v){
+    const { psi, chi } = jonesToEllipse(v);
+    if (Math.abs(chi) > 22.5) return chi > 0 ? "R" : "L";
+    let best = "H", bestDiff = 999;
+    QUIZ_LINEAR_LABELS.forEach(([label, ang])=>{
+      const diff = Math.abs(((psi - ang + 90) % 180 + 180) % 180 - 90);
+      if (diff < bestDiff){ bestDiff = diff; best = label; }
+    });
+    return best;
+  }
+
+  function quizLabelAngle(label){
+    const found = QUIZ_LINEAR_LABELS.find(([l])=> l === label);
+    return found ? found[1] : 0;
+  }
+
+  function quizElementPool(){
+    const pool = [
+      { type: "polarizer", angle: 0, circular: null },
+      { type: "polarizer", angle: 90, circular: null },
+      { type: "polarizer", angle: 45, circular: null },
+      { type: "polarizer", angle: -45, circular: null }
+    ];
+    if (quizAllowWaveplates){
+      pool.push({ type: "waveplate", angle: 0, circular: null });
+      pool.push({ type: "waveplate", angle: 45, circular: null });
+      pool.push({ type: "waveplate", angle: 22.5, circular: null });
+      pool.push({ type: "glass", angle: null, circular: null });
+    }
+    if (quizAllowCircular){
+      pool.push({ type: "polarizer", angle: 0, circular: "R" });
+      pool.push({ type: "polarizer", angle: 0, circular: "L" });
+      if (quizAllowWaveplates){
+        pool.push({ type: "qwp", angle: 0, circular: null });
+        pool.push({ type: "qwp", angle: 45, circular: null });
+      }
+    }
+    return pool;
+  }
+
+  function quizClassify(prob){
+    if (prob > 0.99) return "transmit";
+    if (prob < 0.01) return "absorbed";
+    return "random";
+  }
+
+  function quizIconMarkup(el){
+    if (el.type === "glass"){
+      // Clear glass: plain, no axis lines -- a true no-op on any state.
+      return `<rect class="glass-square" x="-28" y="-28" width="56" height="56" rx="11"/>`;
+    }
+    if (el.type === "waveplate" || el.type === "qwp"){
+      const squareClass = el.type === "qwp" ? "qwp-square" : "waveplate-square";
+      return `<g transform="rotate(${-el.angle})">
+        <rect class="${squareClass}" x="-28" y="-28" width="56" height="56" rx="11"/>
+        <line class="waveplate-slow-axis" x1="0" y1="-24" x2="0" y2="24"/>
+        <line class="waveplate-fast-axis" x1="-24" y1="0" x2="24" y2="0"/>
+      </g>`;
+    }
+    if (el.circular){
+      return `<rect class="element-square" x="-28" y="-28" width="56" height="56" rx="11"/>
+        ${circularIconMarkup(11, el.circular === "R")}`;
+    }
+    return `<g transform="rotate(${-el.angle})">
+      <rect class="element-square" x="-28" y="-28" width="56" height="56" rx="11"/>
+      <line class="element-arrow" x1="-22" y1="0" x2="22" y2="0" stroke-width="3" stroke-linecap="round"
+            marker-start="url(#arrow-white)" marker-end="url(#arrow-white)"/>
+    </g>`;
+  }
+
+  function quizStateIconMarkup(v){
+    const { psi, chi } = jonesToEllipse(v);
+    if (Math.abs(chi) < LINEAR_EPS_DEG){
+      return `<g transform="rotate(${-psi})">
+        <line class="state-line" x1="-20" y1="0" x2="20" y2="0" stroke-width="3" stroke-linecap="round"
+              marker-start="url(#arrow-blue)" marker-end="url(#arrow-blue)"/>
+      </g>`;
+    }
+    const t = Math.min(1, Math.abs(chi) / 45);
+    const a = 20 - 10 * t, b = 10 * t;
+    return `<g transform="rotate(${-psi})"><ellipse class="state-ellipse" cx="0" cy="0" rx="${a}" ry="${b}"/></g>`;
+  }
+
+  function quizElementLabel(el){
+    if (el.type === "glass") return "Clear Glass";
+    if (el.type === "waveplate") return "Half-Wave Plate";
+    if (el.type === "qwp") return "Quarter-Wave Plate";
+    return "Polarizer";
+  }
+
+  // Quiz mode only ever uses half-wave plates at these three exact angles,
+  // so each one has a well-defined gate name to show under its angle.
+  const QUIZ_WAVEPLATE_GATE_NAMES = { 0: "Phase (Z)", 45: "Not (X)", 22.5: "Basis Change (Hadamard)" };
+
+  function quizElementAngleLabel(el){
+    if (el.type === "glass") return "No effect";
+    if (el.circular) return el.circular === "R" ? "Y+" : "Y-";
+    const a = formatAngle(el.angle);
+    return el.angle === 45 ? "+" + a : a;
+  }
+
+  // The under-icon label markup: just the angle (or Y+/Y-) normally, or
+  // the angle plus the matching gate name underneath for a half-wave plate.
+  function quizElementAngleMarkup(el, x, y){
+    const angleText = quizElementAngleLabel(el);
+    const gateName = el.type === "waveplate" ? QUIZ_WAVEPLATE_GATE_NAMES[el.angle] : null;
+    if (gateName){
+      return `<text class="el-angle-label" x="${x}" y="${y}">
+        <tspan x="${x}" dy="0">${angleText}</tspan>
+        <tspan class="el-gate-label" x="${x}" dy="15">${gateName}</tspan>
+      </text>`;
+    }
+    return `<text class="el-angle-label" x="${x}" y="${y}">${angleText}</text>`;
+  }
+
+  // Main diagram: just the most recent state and the element currently
+  // being tested, so it never grows unbounded -- the full history lives
+  // in the compact strip above (renderQuizHistoryRow).
+  function renderQuizDiagram(){
+    const svg = document.getElementById("quiz-svg");
+    const stateX = 70, elX = 230, y = 80;
+    svg.removeAttribute("width");
+    svg.setAttribute("viewBox", `0 0 300 170`);
+    let html = svgDefs();
+    html += `<line class="beam-line" x1="${stateX+30}" y1="${y}" x2="${elX-30}" y2="${y}"/>`;
+    html += `${refCross(stateX, y, 18)}<g transform="translate(${stateX},${y})">${quizStateIconMarkup(quizStateHistory[quizStateHistory.length-1])}</g>`;
+    html += `<text class="el-title" x="${stateX}" y="${y+54}">Current photon</text>`;
+    if (quizElement){
+      html += `<g transform="translate(${elX},${y})">${quizIconMarkup(quizElement)}</g>`;
+      html += `<text class="el-title" x="${elX}" y="${y-44}">${quizElementLabel(quizElement)}</text>`;
+      html += quizElementAngleMarkup(quizElement, elX, y+54);
+    }
+    svg.innerHTML = html;
+  }
+
+  // Compact strip of every already-survived element, at 25% scale and
+  // packed tightly, so the history stays visible without the main diagram
+  // growing without bound.
+  function renderQuizHistoryRow(){
+    const svg = document.getElementById("quiz-history-svg");
+    const iconSize = 56 * 0.25, gap = 3, slot = iconSize + gap;
+    const items = [{ kind: "state", vector: quizStateHistory[0] }]; // the original polarization
+    quizElementHistory.forEach(el => items.push({ kind: "element", el: el }));
+    const width = items.length * slot - gap;
+    svg.setAttribute("viewBox", `0 0 ${Math.max(width, 1)} ${iconSize}`);
+    svg.setAttribute("width", width);
+    svg.setAttribute("height", iconSize);
+    let html = svgDefs();
+    items.forEach((item, i)=>{
+      const cx = i * slot + iconSize / 2, cy = iconSize / 2;
+      const inner = item.kind === "state" ? quizStateIconMarkup(item.vector) : quizIconMarkup(item.el);
+      html += `<g transform="translate(${cx},${cy}) scale(0.25)">${inner}</g>`;
+    });
+    svg.innerHTML = html;
+  }
+
+  function quizSetStatus(text){
+    document.getElementById("quiz-status").textContent = text;
+  }
+
+  function quizUpdateStats(){
+    document.getElementById("quiz-streak").textContent = quizStreak;
+    document.getElementById("quiz-best").textContent = quizBest;
+    renderQuizHistoryRow();
+  }
+
+  function quizShowQuestion(which){
+    document.getElementById("quiz-q1").style.display = which === "q1" ? "block" : "none";
+    document.getElementById("quiz-q2").style.display = which === "q2" ? "block" : "none";
+    document.getElementById("quiz-lost-panel").style.display = which === "lost" ? "block" : "none";
+  }
+
+  // Same type/angle/handedness -- used to avoid immediately re-drawing the
+  // exact polarizer that just ended a round on the very first try.
+  function quizElementsEqual(a, b){
+    if (!a || !b) return false;
+    return a.type === b.type && a.angle === b.angle && a.circular === b.circular;
+  }
+
+  function quizNewElement(){
+    let pool = quizElementPool();
+    if (quizElementHistory.length === 0 && quizAvoidElement){
+      const filtered = pool.filter(el => !quizElementsEqual(el, quizAvoidElement));
+      if (filtered.length > 0) pool = filtered;
+      quizAvoidElement = null; // only skip the one immediate repeat
+    }
+    quizElement = pool[Math.floor(Math.random() * pool.length)];
+    quizBusy = false;
+    renderQuizDiagram();
+    renderQuizQ1();
+    quizShowQuestion("q1");
+    quizSetStatus("What happens when this photon meets the next polarizer?");
+  }
+
+  function quizStartRound(){
+    quizStateVector = jonesFromAngle(0);
+    quizStateLabel = "H";
+    quizElementHistory = [];
+    quizStateHistory = [jonesFromAngle(0)];
+    renderQuizHistoryRow();
+    quizNewElement();
+  }
+
+  function renderQuizQ1(){
+    const row = document.getElementById("quiz-q1-buttons");
+    row.querySelectorAll(".quiz-btn").forEach(b=>{ b.className = "quiz-btn"; b.disabled = false; });
+  }
+
+  function quizMarkAndAdvance(btn, isCorrect, onAdvance){
+    quizBusy = true;
+    document.querySelectorAll(".quiz-btn").forEach(b=> b.disabled = true);
+    if (isCorrect){
+      btn.classList.add("correct");
+      setTimeout(()=>{
+        quizBusy = false;
+        document.querySelectorAll(".quiz-btn").forEach(b=> b.disabled = false);
+        onAdvance();
+      }, 500);
+    } else {
+      btn.classList.add("wrong");
+      setTimeout(()=>{
+        btn.classList.remove("wrong");
+        document.querySelectorAll(".quiz-btn").forEach(b=> b.disabled = false);
+        quizBusy = false;
+      }, 700);
+    }
+  }
+
+  function quizLose(reason){
+    // if the round was lost on its very first element, remember it so the
+    // next round's first draw skips that exact polarizer/wave-plate
+    quizAvoidElement = quizElementHistory.length === 0 ? quizElement : null;
+    quizStreak = 0;
+    quizUpdateStats();
+    quizShowQuestion("lost");
+    document.getElementById("quiz-lost-sub").textContent = reason === "unlucky"
+      ? "You got unlucky and the photon was absorbed"
+      : "The polarizer was orthogonal to the state";
+    quizSetStatus("Photon Lost! Start a new round to try again.");
+  }
+
+  function quizAnswerQ1(choice, btn){
+    if (quizBusy) return;
+    const { prob, out } = applyElement(quizStateVector, quizElement);
+    const correct = quizClassify(prob);
+    quizMarkAndAdvance(btn, choice === correct, ()=>{
+      if (correct === "absorbed"){
+        quizLose("orthogonal");
+        return;
+      }
+      const survives = correct === "transmit" ? true : Math.random() < prob;
+      if (!survives){
+        quizLose("unlucky");
+        return;
+      }
+      quizStateVector = out;
+      quizStateLabel = quizVectorLabel(out);
+      renderQuizDiagram();
+      renderQuizQ2();
+      quizShowQuestion("q2");
+      quizSetStatus("The photon transmitted -- what's its new polarization?");
+    });
+  }
+
+  function renderQuizQ2(){
+    const labels = ["H", "V", "+45", "-45"].concat(quizAllowCircular ? ["R", "L"] : []);
+    const displayText = { H: "H", V: "V", "+45": "+45\u00b0", "-45": "-45\u00b0", R: "R", L: "L" };
+    const row = document.getElementById("quiz-q2-buttons");
+    row.innerHTML = labels.map(l=> `<button class="quiz-btn" data-label="${l}">${displayText[l]}</button>`).join("");
+    row.querySelectorAll(".quiz-btn").forEach(btn=>{
+      btn.addEventListener("click", ()=> quizAnswerQ2(btn.dataset.label, btn));
+    });
+  }
+
+  function quizAnswerQ2(label, btn){
+    if (quizBusy) return;
+    quizMarkAndAdvance(btn, label === quizStateLabel, ()=>{
+      quizElementHistory.push(quizElement);
+      quizStateHistory.push(quizStateVector);
+      quizStreak++;
+      quizBest = Math.max(quizBest, quizStreak);
+      quizUpdateStats();
+      quizNewElement();
+    });
+  }
+
+  document.getElementById("quiz-q1-buttons").querySelectorAll(".quiz-btn").forEach(btn=>{
+    btn.addEventListener("click", ()=> quizAnswerQ1(btn.dataset.choice, btn));
+  });
+  document.getElementById("quiz-new-round-btn").addEventListener("click", quizStartRound);
+
+  // ================= Game mode =================
+  // Same underlying physics and deck pool as Quiz mode, but no questions:
+  // the player is dealt 3 cards and picks which to play, trying to keep
+  // the photon alive by judging which card gives the best odds.
+  let gameAllowWaveplates = false;
+  let gameAllowCircular = false;
+  let gameStateVector = jonesFromAngle(0);
+  let gameHand = [];
+  let gameElementHistory = [];
+  let gameStateHistory = [jonesFromAngle(0)];
+  let gameStreak = 0;
+  let gameBest = 0;
+  let gameBusy = false;
+  let gameLastOutcome = null;        // null | "success" | "lost" -- drives the action-panel reveal
+  let gameLastPlayedElement = null;
+  let gameLastStateBefore = null;
+
+  function gameElementPool(){
+    const pool = [
+      { type: "polarizer", angle: 0, circular: null },
+      { type: "polarizer", angle: 90, circular: null },
+      { type: "polarizer", angle: 45, circular: null },
+      { type: "polarizer", angle: -45, circular: null }
+    ];
+    if (gameAllowWaveplates){
+      pool.push({ type: "waveplate", angle: 0, circular: null });
+      pool.push({ type: "waveplate", angle: 45, circular: null });
+      pool.push({ type: "waveplate", angle: 22.5, circular: null });
+      pool.push({ type: "glass", angle: null, circular: null });
+    }
+    if (gameAllowCircular){
+      pool.push({ type: "polarizer", angle: 0, circular: "R" });
+      pool.push({ type: "polarizer", angle: 0, circular: "L" });
+      if (gameAllowWaveplates){
+        pool.push({ type: "qwp", angle: 0, circular: null });
+        pool.push({ type: "qwp", angle: 45, circular: null });
+      }
+    }
+    return pool;
+  }
+
+  // Draws are uniform within a category, but polarizers (linear or
+  // circular) are drawn twice as often as wave-plate-category objects
+  // (HWP/QWP/glass) whenever wave-plates are active; duplicates in hand
+  // are possible and expected either way.
+  function gameDrawCard(){
+    const pool = gameElementPool();
+    const polarizers = pool.filter(el => el.type === "polarizer");
+    const waveplateCategory = pool.filter(el => el.type !== "polarizer");
+    if (waveplateCategory.length === 0) return polarizers[Math.floor(Math.random() * polarizers.length)];
+    const useWaveplate = Math.random() < 1/3; // polarizers:waveplates = 2:1
+    const from = useWaveplate ? waveplateCategory : polarizers;
+    return from[Math.floor(Math.random() * from.length)];
+  }
+
+  function gameUpdateStats(){
+    document.getElementById("game-streak").textContent = gameStreak;
+    document.getElementById("game-best").textContent = gameBest;
+    renderGameHistoryRow();
+  }
+
+  function renderGameHistoryRow(){
+    const svg = document.getElementById("game-history-svg");
+    const iconSize = 56 * 0.25, gap = 3, slot = iconSize + gap;
+    const items = [{ kind: "state", vector: gameStateHistory[0] }];
+    gameElementHistory.forEach(el => items.push({ kind: "element", el: el }));
+    const width = items.length * slot - gap;
+    svg.setAttribute("viewBox", `0 0 ${Math.max(width, 1)} ${iconSize}`);
+    svg.setAttribute("width", width);
+    svg.setAttribute("height", iconSize);
+    let html = svgDefs();
+    items.forEach((item, i)=>{
+      const cx = i * slot + iconSize / 2, cy = iconSize / 2;
+      const inner = item.kind === "state" ? quizStateIconMarkup(item.vector) : quizIconMarkup(item.el);
+      html += `<g transform="translate(${cx},${cy}) scale(0.25)">${inner}</g>`;
+    });
+    svg.innerHTML = html;
+  }
+
+  // Full descriptive card name, e.g. "Horizontal Polarizer" or
+  // "Phase / Z Half Wave-Plate", for the hand's card labels.
+  function gameCardName(el){
+    if (el.type === "glass") return "Clear Glass";
+    if (el.type === "waveplate"){
+      const names = { 0: "Phase / Z", 45: "Not / X", 22.5: "Hadamard" };
+      return `${names[el.angle]} Half Wave-Plate`;
+    }
+    if (el.type === "qwp") return `Quarter Wave-Plate (${formatAngle(el.angle)})`;
+    if (el.circular) return el.circular === "R" ? "Right-Circular Polarizer" : "Left-Circular Polarizer";
+    const names = { 0: "Horizontal", 90: "Vertical", 45: "+45\u00b0", "-45": "-45\u00b0" };
+    return `${names[el.angle]} Polarizer`;
+  }
+
+  // A "wave-plate category" object (HWP, QWP, or clear glass) never
+  // absorbs -- it always transmits deterministically -- so a successful
+  // play of one is framed as a rotation, not a probabilistic transmission.
+  function gameIsWaveplateCategory(el){
+    return el.type === "waveplate" || el.type === "qwp" || el.type === "glass";
+  }
+
+  function twoLineLabel(x, y, line1, line2){
+    return `<text class="el-title" x="${x}" y="${y}">
+      <tspan x="${x}" dy="0">${line1}</tspan>
+      <tspan x="${x}" dy="12">${line2}</tspan>
+    </text>`;
+  }
+
+  // Action panel. Persistently shows what just happened -- it no longer
+  // collapses back to a single icon after a few seconds -- so the player
+  // always sees the full chain: Prior Photon State -> Object played ->
+  // Current Photon State -> an empty dashed "Next Object" slot inviting the
+  // next play. Before any card has been played this round, only the
+  // current state and the dashed slot are shown; after a loss, the dashed
+  // slot is replaced with an absorbed marker (and no further play is
+  // possible until a new round starts).
+  function renderGameDiagram(){
+    const svg = document.getElementById("game-svg");
+    const y = 80;
+    let html = svgDefs();
+    if (gameLastOutcome === "success"){
+      const priorX = 60, objX = 190, curX = 320, nextX = 450, totalWidth = 520;
+      svg.setAttribute("viewBox", `0 0 ${totalWidth} 170`);
+      svg.setAttribute("width", totalWidth);
+      svg.setAttribute("height", 170);
+      html += `<line class="beam-line" x1="${priorX+30}" y1="${y}" x2="${objX-30}" y2="${y}"/>`;
+      html += `${refCross(priorX, y, 18)}<g transform="translate(${priorX},${y})">${quizStateIconMarkup(gameLastStateBefore)}</g>`;
+      html += twoLineLabel(priorX, y+54, "Prior", "Photon State");
+
+      html += `<g transform="translate(${objX},${y})">${quizIconMarkup(gameLastPlayedElement)}</g>`;
+      html += `<text class="el-title" x="${objX}" y="${y-44}">${quizElementLabel(gameLastPlayedElement)}</text>`;
+      html += quizElementAngleMarkup(gameLastPlayedElement, objX, y+54);
+
+      html += `<line class="beam-line" x1="${objX+30}" y1="${y}" x2="${curX-18}" y2="${y}"/>`;
+      html += `${refCross(curX, y, 18)}<g transform="translate(${curX},${y})">${quizStateIconMarkup(gameStateVector)}</g>`;
+      html += twoLineLabel(curX, y+54, "Current", "Photon State");
+
+      html += `<line class="beam-line" x1="${curX+30}" y1="${y}" x2="${nextX-28}" y2="${y}" stroke-dasharray="3 4"/>`;
+      html += `<rect class="next-object-slot" x="${nextX-28}" y="${y-28}" width="56" height="56" rx="11"/>`;
+      html += `<text class="el-title" x="${nextX}" y="${y+54}">Next Object</text>`;
+    } else if (gameLastOutcome === "lost"){
+      const priorX = 60, objX = 190, afterX = 320, totalWidth = 390;
+      svg.setAttribute("viewBox", `0 0 ${totalWidth} 170`);
+      svg.setAttribute("width", totalWidth);
+      svg.setAttribute("height", 170);
+      html += `<line class="beam-line" x1="${priorX+30}" y1="${y}" x2="${objX-30}" y2="${y}"/>`;
+      html += `${refCross(priorX, y, 18)}<g transform="translate(${priorX},${y})">${quizStateIconMarkup(gameLastStateBefore)}</g>`;
+      html += twoLineLabel(priorX, y+54, "Prior", "Photon State");
+
+      html += `<g transform="translate(${objX},${y})">${quizIconMarkup(gameLastPlayedElement)}</g>`;
+      html += `<text class="el-title" x="${objX}" y="${y-44}">${quizElementLabel(gameLastPlayedElement)}</text>`;
+      html += quizElementAngleMarkup(gameLastPlayedElement, objX, y+54);
+
+      html += `<line class="beam-line" x1="${objX+30}" y1="${y}" x2="${afterX-18}" y2="${y}" stroke-dasharray="2 3"/>`;
+      html += `<text class="absorbed-mark" x="${afterX}" y="${y+7}">&#10005;</text>`;
+      html += `<text class="el-title" x="${afterX}" y="${y+54}">Absorbed</text>`;
+    } else {
+      const curX = 70, nextX = 200, totalWidth = 270;
+      svg.setAttribute("viewBox", `0 0 ${totalWidth} 170`);
+      svg.setAttribute("width", totalWidth);
+      svg.setAttribute("height", 170);
+      html += `${refCross(curX, y, 18)}<g transform="translate(${curX},${y})">${quizStateIconMarkup(gameStateVector)}</g>`;
+      html += twoLineLabel(curX, y+54, "Current", "Photon State");
+      html += `<line class="beam-line" x1="${curX+30}" y1="${y}" x2="${nextX-28}" y2="${y}" stroke-dasharray="3 4"/>`;
+      html += `<rect class="next-object-slot" x="${nextX-28}" y="${y-28}" width="56" height="56" rx="11"/>`;
+      html += `<text class="el-title" x="${nextX}" y="${y+54}">Next Object</text>`;
+    }
+    svg.innerHTML = html;
+  }
+
+  // The hand: 3 playing-card-style boxes below the action panel, each with
+  // the element's icon and full descriptive name, clickable to play it. Once
+  // the round is lost, all three become red "Start New Game" cards instead
+  // -- there's no separate New Round button.
+  function renderGameHand(){
+    const row = document.getElementById("game-hand-row");
+    if (gameLastOutcome === "lost"){
+      row.innerHTML = [0, 1, 2].map(()=> `
+        <div class="game-card-box lost-card">
+          <div class="game-card-label">Start New Game</div>
+        </div>`).join("");
+      row.querySelectorAll(".game-card-box").forEach(box=>{
+        box.addEventListener("click", gameStartRound);
+      });
+      return;
+    }
+    row.innerHTML = gameHand.map((el, i)=> `
+      <div class="game-card-box" data-index="${i}">
+        <svg class="game-card-icon" viewBox="-45 -45 90 90" xmlns="http://www.w3.org/2000/svg">
+          ${svgDefs()}${quizIconMarkup(el)}
+        </svg>
+        <div class="game-card-label">${gameCardName(el)}</div>
+      </div>`).join("");
+    row.querySelectorAll(".game-card-box").forEach(box=>{
+      box.addEventListener("click", ()=>{
+        playSound(playCardFlip);
+        gamePlayCard(Number(box.dataset.index));
+      });
+    });
+  }
+
+  const GAME_STREAK_HINT = "Play another object to increase your streak";
+
+  // The one message box between the streak/icon row and the play area:
+  // "kind" is "neutral" | "lost" | "success" | "lucky" | "rotated" | "unchanged".
+  function gameShowMessage(kind, sub){
+    const box = document.getElementById("game-message-box");
+    const cssClass = kind === "lucky" ? "success" : kind === "unchanged" ? "rotated" : kind;
+    box.className = "game-message " + cssClass;
+    if (kind === "neutral"){
+      box.innerHTML = `<div class="game-message-neutral-text">Play an object from your hand and try to help the photon survive.</div>`;
+    } else if (kind === "lost"){
+      box.innerHTML = `<div class="game-message-title">Photon Lost!</div><div class="game-message-sub">${sub}</div>`;
+    } else if (kind === "rotated"){
+      box.innerHTML = `<div class="game-message-title">Polarization state rotated!</div><div class="game-message-sub">${GAME_STREAK_HINT}</div>`;
+    } else if (kind === "unchanged"){
+      box.innerHTML = `<div class="game-message-title">Nothing happens!</div><div class="game-message-sub">${GAME_STREAK_HINT}</div>`;
+    } else if (kind === "lucky"){
+      box.innerHTML = `<div class="game-message-title">Successful Transmission!</div><div class="game-message-sub">You got lucky that time! ${GAME_STREAK_HINT}</div>`;
+    } else {
+      box.innerHTML = `<div class="game-message-title">Successful Transmission!</div><div class="game-message-sub">${GAME_STREAK_HINT}</div>`;
+    }
+  }
+
+  function gameStartRound(){
+    gameStreak = 0;
+    gameStateVector = jonesFromAngle(0);
+    gameElementHistory = [];
+    gameStateHistory = [jonesFromAngle(0)];
+    gameHand = [gameDrawCard(), gameDrawCard(), gameDrawCard()];
+    gameLastOutcome = null;
+    gameLastPlayedElement = null;
+    gameLastStateBefore = null;
+    renderGameDiagram();
+    renderGameHand();
+    gameShowMessage("neutral");
+    gameUpdateStats();
+  }
+
+  function gameLose(reason){
+    playSound(playWompWomp);
+    gameShowMessage("lost", reason === "unlucky"
+      ? "You got unlucky and the photon was absorbed"
+      : "The polarizer was orthogonal to the state");
+    renderGameHand();
+  }
+
+  // A round is over once lost -- block further plays until "Start New Game".
+  function gamePlayCard(idx){
+    if (gameLastOutcome === "lost") return;
+
+    const el = gameHand[idx];
+    const stateBefore = gameStateVector;
+    const { prob, out } = applyElement(gameStateVector, el);
+    const classification = quizClassify(prob); // "transmit" | "absorbed" | "random"
+    const survives = classification === "transmit" ? true : (classification === "absorbed" ? false : Math.random() < prob);
+
+    gameLastPlayedElement = el;
+    gameLastStateBefore = stateBefore;
+
+    if (!survives){
+      gameLastOutcome = "lost";
+      renderGameDiagram();
+      gameLose(classification === "random" ? "unlucky" : "orthogonal");
+      return;
+    }
+
+    gameStateVector = out;
+    gameElementHistory.push(el);
+    gameStateHistory.push(out);
+    gameHand[idx] = gameDrawCard(); // draw a replacement immediately
+    gameStreak++;
+    gameBest = Math.max(gameBest, gameStreak);
+    gameUpdateStats();
+
+    gameLastOutcome = "success";
+    renderGameDiagram();
+    renderGameHand();
+    playSound(playWinChime);
+
+    if (gameIsWaveplateCategory(el)){
+      gameShowMessage(quizVectorLabel(stateBefore) === quizVectorLabel(out) ? "unchanged" : "rotated");
+    }
+    else if (classification === "random") gameShowMessage("lucky");
+    else gameShowMessage("success");
+  }
+
+  // ---- Sound effects (synthesized via Web Audio, so nothing needs to be
+  // bundled) -- off by default; toggled from the Sound On/Off switch shown
+  // only in Game mode. ----
+  let soundEnabled = false;
+  let audioCtx = null;
+  function getAudioCtx(){
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    return audioCtx;
+  }
+  function playSound(fn){
+    if (!soundEnabled) return;
+    try { fn(); } catch(e) { /* audio not available -- fail silently */ }
+  }
+  function tone(freq, startOffset, duration, type, peak){
+    const ctx = getAudioCtx();
+    const t0 = ctx.currentTime + startOffset;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, t0);
+    gain.gain.setValueAtTime(0.0001, t0);
+    gain.gain.linearRampToValueAtTime(peak, t0 + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t0 + duration);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(t0);
+    osc.stop(t0 + duration + 0.02);
+  }
+  function playCardFlip(){
+    const ctx = getAudioCtx();
+    const t0 = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "square";
+    osc.frequency.setValueAtTime(1100, t0);
+    osc.frequency.exponentialRampToValueAtTime(280, t0 + 0.09);
+    gain.gain.setValueAtTime(0.12, t0);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.1);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(t0);
+    osc.stop(t0 + 0.11);
+  }
+  function playWinChime(){
+    tone(523.25, 0.00, 0.18, "sine", 0.16); // C5
+    tone(659.25, 0.09, 0.18, "sine", 0.16); // E5
+    tone(783.99, 0.18, 0.28, "sine", 0.18); // G5
+  }
+  function playWompWomp(){
+    tone(196.00, 0.00, 0.32, "sawtooth", 0.13); // G3
+    tone(174.61, 0.32, 0.55, "sawtooth", 0.13); // F3, lower -- the "womp"
+  }
+
+  // The wave-plate/circular option switches live in the shared toolbar but
+  // control whichever of Quiz/Game is currently active, so their active
+  // state must be re-synced to that mode's flags every time appMode changes.
+  function syncOptionSwitches(){
+    const allowWP = appMode === "game" ? gameAllowWaveplates : quizAllowWaveplates;
+    const allowCirc = appMode === "game" ? gameAllowCircular : quizAllowCircular;
+    document.querySelectorAll('#waveplate-option-switch button').forEach(b=>{
+      b.classList.toggle("active", (b.dataset.wpoption === "on") === allowWP);
+    });
+    document.querySelectorAll('#circular-option-switch button').forEach(b=>{
+      b.classList.toggle("active", (b.dataset.circoption === "on") === allowCirc);
+    });
+  }
+
+  document.querySelectorAll('#waveplate-option-switch button').forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const on = btn.dataset.wpoption === "on";
+      if (appMode === "game"){ gameAllowWaveplates = on; gameStartRound(); }
+      else { quizAllowWaveplates = on; quizStartRound(); }
+      syncOptionSwitches();
+    });
+  });
+  document.querySelectorAll('#circular-option-switch button').forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const on = btn.dataset.circoption === "on";
+      if (appMode === "game"){ gameAllowCircular = on; gameStartRound(); }
+      else { quizAllowCircular = on; quizStartRound(); }
+      syncOptionSwitches();
+    });
+  });
+
+  document.querySelectorAll('#sound-toggle-switch button').forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      soundEnabled = btn.dataset.soundoption === "on";
+      document.querySelectorAll('#sound-toggle-switch button').forEach(b=>{
+        b.classList.toggle("active", b === btn);
+      });
+    });
+  });
+
+  const appModeSwitch = document.getElementById("app-mode-switch");
+  appModeSwitch.querySelectorAll("button").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      appMode = btn.dataset.appmode;
+      appModeSwitch.querySelectorAll("button").forEach(b=>b.classList.toggle("active", b === btn));
+      document.getElementById("build-mode-content").style.display = appMode === "build" ? "" : "none";
+      document.getElementById("quiz-panel").style.display = appMode === "quiz" ? "block" : "none";
+      document.getElementById("game-panel").style.display = appMode === "game" ? "block" : "none";
+      // Laser/Photon and Basic/Advanced only apply to Build mode's own diagram;
+      // the wave-plate/circular option switches only apply to Quiz/Game;
+      // the sound toggle only applies to Game.
+      const isBuild = appMode === "build";
+      document.getElementById("mode-switch").style.display = isBuild ? "" : "none";
+      document.getElementById("ui-mode-switch").style.display = isBuild ? "" : "none";
+      document.getElementById("reset-btn").style.display = isBuild ? "" : "none";
+      document.getElementById("waveplate-option-switch").style.display = isBuild ? "none" : "";
+      document.getElementById("circular-option-switch").style.display = isBuild ? "none" : "";
+      document.getElementById("sound-toggle-switch").style.display = appMode === "game" ? "" : "none";
+      syncOptionSwitches();
+      if (appMode === "quiz" && !quizElement) quizStartRound();
+      if (appMode === "game" && gameHand.length === 0) gameStartRound();
+    });
+  });
 
   // ================= Init =================
   rebuildEverything();
