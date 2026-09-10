@@ -1496,7 +1496,13 @@
     }
     const t = Math.min(1, Math.abs(chi) / 45);
     const a = 20 - 10 * t, b = 10 * t;
-    return `<g transform="rotate(${-psi})"><ellipse class="state-ellipse" cx="0" cy="0" rx="${a}" ry="${b}"/></g>`;
+    const pad = 4;
+    const [d1, d2] = handednessArcsD(a + pad, b + pad, chi > 0);
+    return `<g transform="rotate(${-psi})">
+      <ellipse class="state-ellipse" cx="0" cy="0" rx="${a}" ry="${b}"/>
+      <path class="handedness-arc" d="${d1}" marker-end="url(#arrow-black)"/>
+      <path class="handedness-arc" d="${d2}" marker-end="url(#arrow-black)"/>
+    </g>`;
   }
 
   function quizElementLabel(el){
@@ -1512,7 +1518,7 @@
 
   function quizElementAngleLabel(el){
     if (el.type === "glass") return "No effect";
-    if (el.circular) return el.circular === "R" ? "Y+" : "Y-";
+    if (el.circular) return el.circular === "R" ? "R" : "L";
     const a = formatAngle(el.angle);
     return el.angle === 45 ? "+" + a : a;
   }
